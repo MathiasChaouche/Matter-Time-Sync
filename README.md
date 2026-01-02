@@ -5,7 +5,7 @@
 
 A native Home Assistant custom component to synchronize **Time** and **Timezone** on Matter devices. 
 
-This component communicates directly with the Matter Server Add-on (or standalone container) via WebSocket, ensuring your devices always display the correct local time. I originally created this solution out of frustration with the IKEA ALPSTUGA's inability to sync time, but it works across various Matter devices. You can even set up automations to instantly sync the time whenever a device is plugged in.
+This component communicates directly with the Matter Server Add-on (or standalone container) via WebSocket, ensuring your devices always display the correct local time. I originally created this solution out of frustration with the **IKEA ALPSTUGA**'s inability to sync time (via Home Assistant), but it works across various Matter devices. You can even set up automations to instantly sync the time whenever a device is plugged in.
 
 ## ✨ Features
 
