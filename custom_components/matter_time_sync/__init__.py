@@ -44,16 +44,16 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         """Handle the sync_time service call."""
         node_id = call.data["node_id"]
         endpoint = call.data["endpoint"]
-        
+
         # Read strictly from initial config data
         ws_address = entry.data.get("websocket_address")
         tz_name = entry.data.get("timezone")
 
         _LOGGER.info("Starting sync for node %s (ep %s)", node_id, endpoint)
-        
+
         session = async_get_clientsession(hass)
         syncer = MatterTimeSyncAsync(session, ws_address, tz_name)
-        
+
         try:
             await syncer.run_sync(node_id, endpoint)
             _LOGGER.info("SUCCESS: Time synced for node %s", node_id)
@@ -94,12 +94,12 @@ class MatterTimeSyncAsync:
             await self.send_command(ws, node_id, endpoint, CLUSTER_ID_TIME_SYNC, CMD_ID_SET_TIME_ZONE, "SetTimeZone", {"timeZone": [tz_obj]})
 
             # 3. DST Offset
-            # dst_obj = {
-            #     "offset": tz_info["dst_adjustment_seconds"],
-            #     "validStarting": self.to_matter_microseconds(tz_info["dst_start"]),
-            #     "validUntil": self.to_matter_microseconds(tz_info["dst_end"]),
-            # }
-            # await self.send_command(ws, node_id, endpoint, CLUSTER_ID_TIME_SYNC, CMD_ID_SET_DST_OFFSET, "SetDSTOffset", {"DSTOffset": [dst_obj]})
+            dst_obj = {
+                "offset": tz_info["dst_adjustment_seconds"],
+                # "validStarting": self.to_matter_microseconds(tz_info["dst_start"]),
+                # "validUntil": self.to_matter_microseconds(tz_info["dst_end"]),
+            }
+            await self.send_command(ws, node_id, endpoint, CLUSTER_ID_TIME_SYNC, CMD_ID_SET_DST_OFFSET, "SetDSTOffset", {"DSTOffset": [dst_obj]})
 
             # 4. UTC Time
             now_utc = datetime.now(timezone.utc)
@@ -119,7 +119,7 @@ class MatterTimeSyncAsync:
         }
         await ws.send_json(message)
         response = await ws.receive_json()
-        
+
         if not response: raise Exception("Empty response")
         if "error_code" in response: raise Exception(f"Matter Server Error: {response}")
         if isinstance(response.get("result"), dict) and "error" in response["result"]:
@@ -165,4 +165,3 @@ class MatterTimeSyncAsync:
                 prev_off = curr_off
             current += timedelta(hours=1)
         return dst_start, dst_end
-
