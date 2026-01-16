@@ -94,12 +94,12 @@ class MatterTimeSyncAsync:
             await self.send_command(ws, node_id, endpoint, CLUSTER_ID_TIME_SYNC, CMD_ID_SET_TIME_ZONE, "SetTimeZone", {"timeZone": [tz_obj]})
 
             # 3. DST Offset
-            dst_obj = {
-                "offset": tz_info["dst_adjustment_seconds"],
-                "validStarting": self.to_matter_microseconds(tz_info["dst_start"]),
-                "validUntil": self.to_matter_microseconds(tz_info["dst_end"]),
-            }
-            await self.send_command(ws, node_id, endpoint, CLUSTER_ID_TIME_SYNC, CMD_ID_SET_DST_OFFSET, "SetDSTOffset", {"DSTOffset": [dst_obj]})
+            # dst_obj = {
+            #     "offset": tz_info["dst_adjustment_seconds"],
+            #     "validStarting": self.to_matter_microseconds(tz_info["dst_start"]),
+            #     "validUntil": self.to_matter_microseconds(tz_info["dst_end"]),
+            # }
+            # await self.send_command(ws, node_id, endpoint, CLUSTER_ID_TIME_SYNC, CMD_ID_SET_DST_OFFSET, "SetDSTOffset", {"DSTOffset": [dst_obj]})
 
             # 4. UTC Time
             now_utc = datetime.now(timezone.utc)
@@ -165,3 +165,4 @@ class MatterTimeSyncAsync:
                 prev_off = curr_off
             current += timedelta(hours=1)
         return dst_start, dst_end
+
